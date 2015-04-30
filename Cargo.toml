@@ -1,0 +1,7 @@
+[package]
+name = "consistent-hash"
+version = "0.1.0"
+authors = ["Hao Wu <hwu@intellisurvey.com>"]
+
+[dependencies]
+crc = "^0.3.1"
