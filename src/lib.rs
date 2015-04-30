@@ -68,22 +68,19 @@ fn add_node(&mut self, id : &'static str) {
       // todo , use search
 }
 
-fn search (&self, id: &str) -> usize {
-     let hash = hash_key(id);
-     //
-     let result = self.nodes.binary_search_by( |node | node.hash_key.cmp(&id) );
-
-     let index = match result {
-        Ok(i)  => i,
-        Err(j) => j,
-     };
-
-     index
+fn search (&self, id: &str) -> Result<usize,usize> {
+     let hash = &hash_key(id);
+     self.nodes.binary_search_by( |node | node.hash_key.cmp(hash) )
 
 }
 
 fn get(&self, id: &'static str) -> &str {
-     let mut index = self.search(id);
+     let result = self.search(id);
+
+     let mut index = match result {
+        Ok(i)  => i,
+        Err(j) => j,
+     };
 
      if index == self.nodes.len() {
         index = 0;
@@ -92,13 +89,16 @@ fn get(&self, id: &'static str) -> &str {
      self.nodes[index].id
 }
 
+// to do, error check
+fn remove ( &mut self, id: &str) -> Option<Node> {
+     let result = self.search(id);
 
-fn remove ( &self, id: &str) -> Option<bool> {
-     let mut index = self.search(id);
-     self.remove(index);
+     match result {
+        Ok(i)  => Some(self.nodes.remove(i)),
+        _ => None,
+     }
+     
 }
-
-
 
 }
 
@@ -106,6 +106,5 @@ fn hash_key (id: &str) -> u32 {
      crc32::checksum_ieee(id.as_bytes()) 
 }
 
-#[test]
-fn it_works() {
-}
+// how to implement the trait in order to srot
+// String ve &str vs &'str vs &'static str
