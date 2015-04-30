@@ -34,6 +34,7 @@ impl Ord for Node {
 
 impl PartialOrd for Node {
     fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
+        // precedence
       self.id.partial_cmp(&other.id)
     }
 }
