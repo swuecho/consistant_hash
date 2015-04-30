@@ -2,7 +2,9 @@ extern crate crc;
 
 use crc::crc32;
 use std::cmp::Ordering;
-
+// *********************************************//
+// Node
+// *********************************************//
 struct Node {
     id : &'static str,
     hash_key: u32,
@@ -11,7 +13,7 @@ struct Node {
 impl Node {
 
 fn new(id: &'static str ) -> Node {
-    Node { id: id, hash_key: crc32::checksum_ieee(id.as_bytes()) }
+    Node { id: id, hash_key: hash_key(id) }
 }
 
 }
@@ -40,10 +42,11 @@ impl PartialOrd for Node {
     }
 }
 
-
+// ***************** Nodes ************************//
 
 type Nodes = Vec<Node>;
 
+// ***************** Ring ***********************//
 struct Ring {
     nodes: Nodes
 }
@@ -62,17 +65,25 @@ fn add_node(&mut self, id : &'static str) {
       let node = Node::new(id);
       self.nodes.push(node);
       self.nodes.sort(); 
+      // todo , use search
 }
 
-fn get(&self, key: &'static str) -> &str {
-     let hash = crc32::checksum_ieee(key.as_bytes());
+fn search (&self, id: &str) -> usize {
+     let hash = hash_key(id);
      //
-     let result = self.nodes.binary_search_by( |node | node.hash_key.cmp(&hash) );
+     let result = self.nodes.binary_search_by( |node | node.hash_key.cmp(&id) );
 
-     let mut index = match result {
+     let index = match result {
         Ok(i)  => i,
         Err(j) => j,
      };
+
+     index
+
+}
+
+fn get(&self, id: &'static str) -> &str {
+     let mut index = self.search(id);
 
      if index == self.nodes.len() {
         index = 0;
@@ -81,6 +92,18 @@ fn get(&self, key: &'static str) -> &str {
      self.nodes[index].id
 }
 
+
+fn remove ( &self, id: &str) -> Option<bool> {
+     let mut index = self.search(id);
+     self.remove(index);
+}
+
+
+
+}
+
+fn hash_key (id: &str) -> u32 {
+     crc32::checksum_ieee(id.as_bytes()) 
 }
 
 #[test]
