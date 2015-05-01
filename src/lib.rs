@@ -5,6 +5,9 @@ use std::cmp::Ordering;
 // *********************************************//
 // Node
 // *********************************************//
+#[derive(Eq)]
+// can replace Eq
+//impl Eq for Node {}
 struct Node {
     id : &'static str,
     hash_key: u32,
@@ -18,7 +21,6 @@ fn new(id: &'static str ) -> Node {
 
 }
 
-impl Eq for Node {}
 
 impl PartialEq for Node {
     fn eq(&self, other: &Node) -> bool {
@@ -34,7 +36,6 @@ impl Ord for Node {
     }
 
 }
-
 impl PartialOrd for Node {
     fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
         // precedence
